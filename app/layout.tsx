@@ -17,7 +17,7 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'Xcess Media',
+  title: 'Xcess Media | Creative & Digital Agency for Restaurants & Interior Design',
   description:
     'Creative and digital marketing solutions for restaurants and interior design studios.',
   generator: 'Xcess Media',

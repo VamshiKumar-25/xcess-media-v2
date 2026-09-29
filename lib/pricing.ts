@@ -253,8 +253,8 @@ export const packagePlans: Record<Industry, PackagePlan[]> = {
     {
       num: '01',
       name: 'Starter',
-      price: '₹34,999',
-      priceNumber: 34999,
+      price: '₹39,999',
+      priceNumber: 39999,
       priceSuffix: '/ month',
       description: 'A focused foundation for restaurants ready to strengthen their digital presence.',
       items: [
