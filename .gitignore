@@ -19,6 +19,14 @@ yarn-error.log*
 # env files
 .env*
 
+# netlify
+.netlify
+/.netlify/
+
+# turbopack & cache
+.turbo
+.cache
+
 # vercel
 .vercel
 

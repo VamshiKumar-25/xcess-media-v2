@@ -1,13 +1,27 @@
+import 'server-only'
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import fs from 'fs'
 import path from 'path'
 
+export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 const OWNER_EMAIL = 'vamshikumar.2507@gmail.com'
-const DEFAULT_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Xcess Media <onboarding@resend.dev>'
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://xcessmedia.in'
+const FALLBACK_FROM_EMAIL = 'Xcess Media <onboarding@resend.dev>'
+const FALLBACK_SITE_URL = 'https://xcessmedia.in'
+
+function getFromEmail(): string {
+  return process.env['RESEND_FROM_EMAIL'] || FALLBACK_FROM_EMAIL
+}
+
+function getSiteUrl(): string {
+  return process.env['NEXT_PUBLIC_SITE_URL'] || FALLBACK_SITE_URL
+}
+
+function getResendApiKey(): string | undefined {
+  return process.env['RESEND_API_KEY']
+}
 
 /**
  * Loads inline email assets (PNG logo, SVG logo, and footer banner)
@@ -78,6 +92,7 @@ function generateClientConfirmationEmail(params: {
     ? `We've received your enquiry: ${industry} — ${packageName} [${enquiryId}]`
     : `We've received your enquiry — Xcess Media [${enquiryId}]`
 
+  const siteUrl = getSiteUrl()
   const logoUrl = 'cid:xcess-media-logo'
   const footerBannerUrl = 'cid:email-footer-banner'
 
@@ -144,7 +159,7 @@ function generateClientConfirmationEmail(params: {
               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
                   <td align="center">
-                    <a href="${SITE_URL}" target="_blank" style="text-decoration: none; display: inline-block;">
+                    <a href="${siteUrl}" target="_blank" style="text-decoration: none; display: inline-block;">
                       <img src="${logoUrl}" alt="XCESS MEDIA" width="160" style="display: block; width: 160px; max-width: 100%; height: auto; border: 0;" />
                     </a>
                     <p style="margin: 8px 0 0 0; font-size: 9px; font-weight: 700; letter-spacing: 0.26em; color: #8B0000; text-transform: uppercase;">CREATE · BUILD · GROW</p>
@@ -227,7 +242,7 @@ function generateClientConfirmationEmail(params: {
                 <!-- CTA Button -->
                 <tr>
                   <td align="center" style="padding: 28px 0 8px 0;">
-                    <a href="${SITE_URL}" target="_blank" style="display: inline-block; background-color: #8B0000; color: #FFFFFF; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 16px rgba(139,0,0,0.3);">
+                    <a href="${siteUrl}" target="_blank" style="display: inline-block; background-color: #8B0000; color: #FFFFFF; font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 16px rgba(139,0,0,0.3);">
                       BACK TO XCESS MEDIA
                     </a>
                   </td>
@@ -257,7 +272,7 @@ function generateClientConfirmationEmail(params: {
               <p style="margin: 14px 0 0 0; font-size: 11px; color: #888888;">
                 <a href="https://instagram.com/xcessmedia.in" target="_blank" style="color: #999999; text-decoration: none; margin: 0 8px;">Instagram</a>
                 <span style="color: #444444;">·</span>
-                <a href="${SITE_URL}" target="_blank" style="color: #999999; text-decoration: none; margin: 0 8px;">Website</a>
+                <a href="${siteUrl}" target="_blank" style="color: #999999; text-decoration: none; margin: 0 8px;">Website</a>
               </p>
 
               <p style="margin: 14px 0 0 0; font-size: 10px; color: #555555; letter-spacing: 0.05em;">
@@ -302,7 +317,7 @@ WHAT HAPPENS NEXT?
 We'll review your requirements and get back to you shortly via WhatsApp / Phone.
 If you need to contact us regarding this enquiry, please keep your enquiry reference ${enquiryId} handy.
 
-Website: ${SITE_URL}
+Website: ${siteUrl}
 Instagram: https://instagram.com/xcessmedia.in
 
 © 2026 Xcess Media. All rights reserved.
@@ -327,7 +342,7 @@ WHAT HAPPENS NEXT?
 We'll review your requirements and get back to you shortly via WhatsApp / Phone.
 If you need to contact us regarding this enquiry, please keep your enquiry reference ${enquiryId} handy.
 
-Website: ${SITE_URL}
+Website: ${siteUrl}
 Instagram: https://instagram.com/xcessmedia.in
 
 © 2026 Xcess Media. All rights reserved.
@@ -636,13 +651,13 @@ export async function POST(request: Request) {
         : []
 
     // 5. Check Resend API Key
-    const apiKey = process.env.RESEND_API_KEY
-    if (!apiKey || apiKey === 'YOUR_RESEND_API_KEY' || apiKey.trim() === '') {
-      console.error('[RESEND_API_KEY MISSING]: RESEND_API_KEY environment variable is not configured.')
+    const apiKey = getResendApiKey()
+    if (!apiKey || apiKey.trim() === '') {
+      console.error('[EMAIL_SERVICE_CONFIG_MISSING]: Resend API key environment variable is not configured.')
       return NextResponse.json(
         {
           success: false,
-          error: 'Email service configuration is pending. Please configure RESEND_API_KEY.',
+          error: 'Email service configuration is pending. Please try again later.',
           code: 'MISSING_API_KEY',
         },
         { status: 500 }
@@ -650,6 +665,7 @@ export async function POST(request: Request) {
     }
 
     const resend = new Resend(apiKey)
+    const fromEmail = getFromEmail()
 
     // 6. Generate Owner Notification Email
     const ownerEmailContent = generateOwnerEmail({
@@ -669,7 +685,7 @@ export async function POST(request: Request) {
     })
 
     const ownerPayload: any = {
-      from: DEFAULT_FROM_EMAIL,
+      from: fromEmail,
       to: [OWNER_EMAIL],
       subject: ownerEmailContent.subject,
       html: ownerEmailContent.html,
@@ -715,7 +731,7 @@ export async function POST(request: Request) {
         const emailAttachments = getEmailAttachments()
 
         const clientPayload: any = {
-          from: DEFAULT_FROM_EMAIL,
+          from: fromEmail,
           to: [trimmedEmail],
           subject: clientEmailContent.subject,
           html: clientEmailContent.html,
