@@ -912,7 +912,7 @@ export default function Navbar({ activePage = 'Home' }: NavbarProps) {
                     <InstagramIcon className="w-5 h-5" />
                   </a>
                   <a
-                    href="https://whatsapp.com"
+                    href="https://wa.me/919448553423?text=Hi"
                     target="_blank"
                     rel="noreferrer"
                     aria-label="WhatsApp"
@@ -921,7 +921,7 @@ export default function Navbar({ activePage = 'Home' }: NavbarProps) {
                     <WhatsAppIcon className="w-5 h-5" />
                   </a>
                   <a
-                    href="https://facebook.com"
+                    href="https://www.facebook.com/share/1VGdn1kfvm/?mibextid=wwXIfr"
                     target="_blank"
                     rel="noreferrer"
                     aria-label="Facebook"
@@ -930,7 +930,7 @@ export default function Navbar({ activePage = 'Home' }: NavbarProps) {
                     <FacebookIcon className="w-5 h-5" />
                   </a>
                   <a
-                    href="https://x.com"
+                    href="https://x.com/wexcessmedia"
                     target="_blank"
                     rel="noreferrer"
                     aria-label="X / Twitter"

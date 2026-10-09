@@ -9,6 +9,7 @@ import {
   Industry,
   PackageType,
   CUSTOM_SERVICE_PILLARS,
+  getCustomServicePillars,
   formatINR,
   getIncludedServices,
   getPackagePlan,
@@ -78,7 +79,7 @@ function ContactFormContent() {
         .filter(Boolean)
       if (parsed.length > 0) return Array.from(new Set(parsed))
     }
-    return ['Photography', 'Short-form Videos / Reels', 'Creative Designs']
+    return ['Photography', '6 Reels', '4 Creative Designs']
   })
 
   // General Enquiry Help Topics (General mode only)
@@ -111,14 +112,12 @@ function ContactFormContent() {
       setPackageName(resolvePackage(nextIndustry, searchParams.get('package')))
 
       const svcParam = searchParams.get('services')
-      if (svcParam) {
+      if (svcParam !== null) {
         const parsed = svcParam
           .split(',')
           .map((s) => normalizeServiceName(s.trim()))
           .filter(Boolean)
-        if (parsed.length > 0) {
-          setCustomServices(Array.from(new Set(parsed)))
-        }
+        setCustomServices(Array.from(new Set(parsed)))
       }
     }
   }, [searchParams])
@@ -159,9 +158,14 @@ function ContactFormContent() {
 
   const toggleCustomService = (serviceName: string) => {
     const canonical = normalizeServiceName(serviceName)
-    setCustomServices((prev) =>
-      prev.includes(canonical) ? prev.filter((s) => s !== canonical) : [...prev, canonical]
-    )
+    setCustomServices((prev) => {
+      const isAlreadyIncluded = prev.some((s) => normalizeServiceName(s) === canonical)
+      if (isAlreadyIncluded) {
+        return prev.filter((s) => normalizeServiceName(s) !== canonical)
+      } else {
+        return [...prev, canonical]
+      }
+    })
   }
 
   // Handle Form Submission
@@ -690,7 +694,7 @@ function ContactFormContent() {
 
                       {/* 3 Pillar Groups */}
                       <div className="space-y-3.5 sm:space-y-4">
-                        {CUSTOM_SERVICE_PILLARS.map((pillarGroup) => (
+                        {getCustomServicePillars(industry).map((pillarGroup) => (
                           <div key={pillarGroup.pillar} className="space-y-2">
                             <div className="flex items-center gap-2 text-[10px] sm:text-[10.5px] font-mono font-bold uppercase tracking-[0.16em] sm:tracking-[0.18em] text-[#8E8E93]">
                               <span className="text-[#8B0000]">{pillarGroup.code} —</span>
@@ -699,7 +703,9 @@ function ContactFormContent() {
 
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5">
                               {pillarGroup.services.map((svc) => {
-                                const isChecked = customServices.includes(svc.name)
+                                const isChecked = customServices.some(
+                                  (s) => normalizeServiceName(s) === normalizeServiceName(svc.name)
+                                )
                                 return (
                                   <button
                                     key={svc.id}
@@ -737,16 +743,18 @@ function ContactFormContent() {
                         ))}
                       </div>
 
-                      {/* SMART RECOMMENDATION BOX WHEN ALL 9 SERVICES ARE SELECTED */}
+                      {/* SMART RECOMMENDATION BOX WHEN ALL 9 SERVICES ARE SELECTED 
                       {customCalculation.isAllServicesSelected && (
                         <div className="mt-4 rounded-xl border border-[#8B0000]/50 bg-[#0D0D10] p-4.5 sm:p-5 shadow-[0_4px_24px_rgba(139,0,0,0.18)] space-y-3.5 animate-in fade-in duration-300">
                           <div className="flex items-center justify-between">
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#8B0000]/20 border border-[#8B0000]/40 text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-[#FF5555]">
                               RECOMMENDED
                             </span>
-                            <span className="text-xs font-mono font-bold text-[#FF5555]">
-                              Save {formatINR(customCalculation.recommendedPackage.savingsVsCustom)}/month
-                            </span>
+                            {customCalculation.recommendedPackage.savingsVsCustom > 0 && (
+                              <span className="text-xs font-mono font-bold text-[#FF5555]">
+                                Save {formatINR(customCalculation.recommendedPackage.savingsVsCustom)}/month
+                              </span>
+                            )}
                           </div>
 
                           <div className="space-y-1">
@@ -755,12 +763,13 @@ function ContactFormContent() {
                               <strong className="text-white font-semibold">
                                 {customCalculation.recommendedPackage.name}
                               </strong>{' '}
-                              package already includes all of these services for{' '}
+                              package includes all 9 services with upgraded deliverables (12 Reels &amp; full management) for{' '}
                               <strong className="text-white font-semibold">
                                 {customCalculation.recommendedPackage.priceFormatted}/month
                               </strong>
-                              . That&apos;s {formatINR(customCalculation.recommendedPackage.savingsVsCustom)} less than the Custom
-                              Package.
+                              {customCalculation.recommendedPackage.savingsVsCustom > 0
+                                ? ` — saving ${formatINR(customCalculation.recommendedPackage.savingsVsCustom)}/month.`
+                                : '.'}
                             </p>
                           </div>
 
@@ -783,6 +792,7 @@ function ContactFormContent() {
                           </div>
                         </div>
                       )}
+                        */}
 
                       {/* Custom Ad Spend Disclosure Note */}
                       {hasAdSpendNote && (
@@ -852,14 +862,14 @@ function ContactFormContent() {
                       </span>
                     </div>
 
-                    {isCustom && customCalculation.isAllServicesSelected && (
+                    {/*isCustom && customCalculation.isAllServicesSelected && (
                       <div className="pt-1 flex items-center justify-between text-[11px] sm:text-xs font-mono text-neutral-400">
                         <span>Individual service value:</span>
                         <span className="line-through text-neutral-500">
                           {formatINR(customCalculation.individualSum)}
                         </span>
                       </div>
-                    )}
+                    )*/}
 
                     <div className="pt-2 border-t border-white/[0.08] flex items-baseline justify-between gap-2">
                       <span className="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-[#8E8E93] whitespace-nowrap">

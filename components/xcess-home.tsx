@@ -10,6 +10,7 @@ import {
   packagePlans,
   customServiceList,
   calculateCustomPackageTotal,
+  normalizeServiceName,
   formatINR,
 } from '@/lib/pricing'
 
@@ -439,8 +440,8 @@ export default function XcessHome() {
   const [selectedPackage, setSelectedPackage] = useState<PackageType>('Standard')
   const [customServices, setCustomServices] = useState<string[]>([
     'Photography',
-    'Creative Designs',
-    'Short-form Videos',
+    '6 Reels',
+    '4 Creative Designs',
   ])
   const [faq, setFaq] = useState<number | null>(null)
   const [processStage, setProcessStage] = useState(0)
@@ -535,9 +536,9 @@ export default function XcessHome() {
     setActivePackageIndex(1) // Standard centered initially
     setSelectedPackage('Standard')
     if (newIndustry === 'Restaurants') {
-      setCustomServices(['Photography', 'Creative Designs', 'Short-form Videos'])
+      setCustomServices(['Photography', '6 Reels', '4 Creative Designs'])
     } else {
-      setCustomServices(['Project Photo', 'Creative Designs', 'Walkthroughs'])
+      setCustomServices(['Project Photo', '6 Walkthrough Reels', '4 Creative Designs'])
     }
   }
 
@@ -636,9 +637,15 @@ export default function XcessHome() {
   }
 
   const toggleCustomService = (service: string) => {
-    setCustomServices((prev) =>
-      prev.includes(service) ? prev.filter((s) => s !== service) : [...prev, service]
-    )
+    const canonical = normalizeServiceName(service)
+    setCustomServices((prev) => {
+      const isAlreadyIncluded = prev.some((s) => normalizeServiceName(s) === canonical)
+      if (isAlreadyIncluded) {
+        return prev.filter((s) => normalizeServiceName(s) !== canonical)
+      } else {
+        return [...prev, service]
+      }
+    })
   }
 
   // Listen for industry switch events (from navbar dropdown, etc.) and URL hash changes
@@ -1554,194 +1561,6 @@ export default function XcessHome() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 05. PROCESS (Fixed Viewport Scroll-Driven Sequence - Desktop & Tablet)     */}
-      {/* ========================================================================= */}
-      <section
-        id="process"
-        ref={processSectionRef}
-        className="hidden md:block relative bg-[#050505] border-y border-[#2A2A2A] sm:h-[1600px] lg:h-[2200px]"
-      >
-        {/* Pinned Sticky Viewport Container - Screen Fitted */}
-        <div
-          ref={stickyContainerRef}
-          className="sticky top-20 md:top-24 w-full min-h-[calc(100vh-5rem)] lg:h-[calc(100vh-6.5rem)] flex flex-col justify-between py-3 sm:py-5 lg:py-6"
-        >
-          <div className="container-xcess w-full h-full flex flex-col justify-between flex-1">
-            {/* 1. Section Header */}
-            <div className="flex items-end justify-between pb-2.5 sm:pb-4 border-b border-[#222222]">
-              <div>
-                <p className="xcess-section-label">
-                  PROCESS
-                </p>
-                <h2 className="mt-1 xcess-section-heading text-[#F8F8F8]">
-                  How We Work.
-                </h2>
-              </div>
-              <div className="flex items-center gap-3 text-xs font-mono text-[#777777] uppercase tracking-[0.2em] shrink-0 pb-0.5">
-                <span className="hidden sm:inline">STAGE</span>
-                <span className="text-white bg-white/[0.06] border border-white/10 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded font-bold text-xs sm:text-sm">
-                  0{processStage + 1} <span className="text-[#888]">/ 05</span>
-                </span>
-              </div>
-            </div>
-
-            {/* 2. Full-Screen 2-Column Stage Viewport Canvas */}
-            <div className="flex-1 flex flex-col justify-center py-3 lg:py-6">
-              <div
-                key={processStage}
-                className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-stretch animate-in fade-in zoom-in-95 duration-400 my-auto"
-              >
-                {/* Left Column (col-span-7): Headline, Narrative, Key Deliverables */}
-                <div className="lg:col-span-7 flex flex-col justify-center space-y-2.5 sm:space-y-4 lg:space-y-5">
-                  <div className="inline-flex items-center gap-2 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-[#8B0000]/10 border border-[#8B0000]/25 text-[9.5px] sm:text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-[#8B0000] w-fit">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#8B0000] animate-ping" />
-                    <span>STAGE {processStages[processStage].num} // {processStages[processStage].phase}</span>
-                  </div>
-
-                  <h3 className="font-display text-xl sm:text-3xl md:text-4xl lg:text-[42px] font-bold tracking-tight text-white leading-[1.1]">
-                    {processStages[processStage].tagline}
-                  </h3>
-
-                  <p className="hidden lg:block text-sm sm:text-base md:text-[15.5px] leading-relaxed text-[#B3B3B3] max-w-xl font-sans">
-                    {processStages[processStage].desc}
-                  </p>
-
-                  {/* Deliverables / Pillars */}
-                  <div className="pt-0.5 sm:pt-1 flex flex-wrap gap-1.5 sm:gap-2">
-                    {processStages[processStage].pillars.map((pillar, i) => (
-                      <span
-                        key={i}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-md bg-white/[0.03] border border-white/10 text-[10px] sm:text-xs font-mono text-[#D4D4D4]"
-                      >
-                        <span className="text-[#8B0000] font-bold">✓</span>
-                        <span>{pillar}</span>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Right Column (col-span-5): Glassmorphism Focus Breakdown Card */}
-                <div className="hidden lg:block lg:col-span-5 relative">
-                  <div className="relative h-full rounded-xl border border-white/10 bg-[#0a0a0c]/90 backdrop-blur-xl p-5 sm:p-6 flex flex-col justify-between overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
-                    {/* Subtle Watermark Stage Number */}
-                    <div className="absolute right-3 bottom-0 text-[120px] font-mono font-black text-white/[0.025] select-none pointer-events-none leading-none">
-                      {processStages[processStage].num}
-                    </div>
-
-                    {/* Card Header: Focus Areas & Timeline */}
-                    <div className="relative z-10 flex items-center justify-between pb-3 border-b border-white/10">
-                      <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#8E8E93]">
-                        CORE ACTIONS
-                      </div>
-                      <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#8B0000]/15 border border-[#8B0000]/30 text-[10px] font-mono font-bold text-[#FF5555]">
-                        <span>⏱ {processStages[processStage].timeline}</span>
-                      </div>
-                    </div>
-
-                    {/* 3 Structured Focus Points */}
-                    <div className="relative z-10 my-3.5 space-y-3">
-                      {processStages[processStage].focusPoints.map((pt) => (
-                        <div key={pt.code} className="flex items-start gap-2.5">
-                          <span className="shrink-0 mt-0.5 px-1.5 py-0.5 rounded bg-white/[0.05] border border-white/10 text-[9.5px] font-mono font-bold text-[#8B0000]">
-                            {pt.code}
-                          </span>
-                          <div>
-                            <h4 className="text-xs sm:text-[13px] font-display font-semibold text-[#F0F0F0]">
-                              {pt.title}
-                            </h4>
-                            <p className="mt-0.5 text-[11px] sm:text-[11.5px] text-[#909095] leading-relaxed">
-                              {pt.desc}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Card Footer: Live Stage Progress */}
-                    <div className="relative z-10 pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-[#666]">
-                      <span>PHASE STATUS</span>
-                      <span className="text-[#8B0000] font-bold">
-                        {Math.round((processStage + 1) * 20)}% COMPLETE
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Horizontal Progress Timeline */}
-            <div className="pt-2.5 sm:pt-4 border-t border-[#222222]">
-              <div className="relative mt-1 sm:mt-2 mb-1.5 sm:mb-3">
-                {/* Inactive Rail Line (#2A2A2A) */}
-                <div className="absolute top-[7px] left-[10%] right-[10%] h-[1.5px] bg-[#2A2A2A]" />
-
-                {/* Active Crimson Progress Line (#8B0000) */}
-                <div
-                  className="absolute top-[7px] left-[10%] h-[1.5px] bg-[#8B0000] transition-[width] duration-150 ease-out"
-                  style={{
-                    width: `${Math.min(1, Math.max(0, processProgress)) * 80}%`
-                  }}
-                />
-
-                {/* 5 Stage Nodes */}
-                <div className="relative flex justify-between items-start z-10">
-                  {processStages.map((stage, idx) => {
-                    const isActive = processStage === idx
-                    const isPassed = processStage > idx
-                    return (
-                      <button
-                        key={stage.num}
-                        type="button"
-                        onClick={() => scrollToStage(idx)}
-                        className="group flex flex-col items-center text-center cursor-pointer focus:outline-none transition-all duration-300"
-                        style={{ width: '20%' }}
-                      >
-                        {/* Node Dot */}
-                        <div className="relative flex items-center justify-center h-3.5 w-3.5 sm:h-4 sm:w-4">
-                          <div
-                            className={`h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full transition-all duration-300 ${isActive
-                              ? 'bg-[#8B0000] border-2 border-[#8B0000] shadow-[0_0_14px_rgba(139,0,0,0.9)] ring-4 ring-[#8B0000]/25 scale-125'
-                              : isPassed
-                                ? 'bg-[#8B0000] border border-[#8B0000]'
-                                : 'bg-[#050505] border border-[#333333] group-hover:border-[#555555]'
-                              }`}
-                          />
-                        </div>
-
-                        {/* Node Number & Title */}
-                        <div className="mt-1 sm:mt-1.5 flex flex-col items-center gap-0.5">
-                          <span
-                            className={`font-mono text-[9px] sm:text-[10.5px] transition-colors duration-300 ${isActive
-                              ? 'text-[#8B0000] font-bold'
-                              : isPassed
-                                ? 'text-[#8B0000]/70 font-medium'
-                                : 'text-[#555555]'
-                              }`}
-                          >
-                            {stage.num}
-                          </span>
-                          <span
-                            className={`font-display text-[8.5px] sm:text-[10.5px] md:text-xs tracking-[0.1em] sm:tracking-[0.14em] uppercase transition-all duration-300 truncate max-w-[54px] sm:max-w-none ${isActive
-                              ? 'text-white font-bold'
-                              : isPassed
-                                ? 'text-[#888888] font-medium'
-                                : 'text-[#555555] group-hover:text-[#777777]'
-                              }`}
-                          >
-                            {stage.title}
-                          </span>
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
       {/* 06. INDUSTRY CAPABILITIES (Refined Editorial Layout)                       */}
       {/* ========================================================================= */}
       <section id="solutions" className="solutions-section pt-10 sm:pt-16 lg:pt-24 pb-10 sm:pb-14 lg:pb-20 border-b border-[#2A2A2A] scroll-mt-24">
@@ -2039,7 +1858,7 @@ export default function XcessHome() {
                       </span>
                       {isCustom && (
                         <span className="text-[9px] font-mono uppercase tracking-wider text-[#8B0000] font-bold">
-                          {customServices.length} {customServices.length === 1 ? 'SERVICE' : 'SERVICES'} SELECTED
+                          {customCalc.selectedCount} {customCalc.selectedCount === 1 ? 'SERVICE' : 'SERVICES'} SELECTED
                         </span>
                       )}
                     </div>
@@ -2074,7 +1893,9 @@ export default function XcessHome() {
                     {isCustom && (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-1.5 gap-y-1">
                         {customServiceList[industry].map((service) => {
-                          const isChecked = customServices.includes(service)
+                          const isChecked = customServices.some(
+                            (s) => normalizeServiceName(s) === normalizeServiceName(service)
+                          )
                           return (
                             <button
                               key={service}
@@ -2218,7 +2039,7 @@ export default function XcessHome() {
                               </span>
                               {isCustom && (
                                 <span className="text-[9px] font-mono uppercase tracking-wider text-[#8B0000] font-bold">
-                                  {customServices.length} {customServices.length === 1 ? 'SERVICE' : 'SERVICES'} SELECTED
+                                  {customCalc.selectedCount} {customCalc.selectedCount === 1 ? 'SERVICE' : 'SERVICES'} SELECTED
                                 </span>
                               )}
                             </div>
@@ -2253,7 +2074,9 @@ export default function XcessHome() {
                             {isCustom && (
                               <div className="grid grid-cols-2 gap-x-1.5 gap-y-1">
                                 {customServiceList[industry].map((service) => {
-                                  const isChecked = customServices.includes(service)
+                                  const isChecked = customServices.some(
+                                    (s) => normalizeServiceName(s) === normalizeServiceName(service)
+                                  )
                                   return (
                                     <button
                                       key={service}
@@ -2575,7 +2398,7 @@ export default function XcessHome() {
                 </svg>
               </a>
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/share/1VGdn1kfvm/?mibextid=wwXIfr"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
@@ -2586,7 +2409,7 @@ export default function XcessHome() {
                 </svg>
               </a>
               <a
-                href="https://whatsapp.com"
+                href="https://wa.me/919448553423?text=Hi"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
@@ -2597,7 +2420,7 @@ export default function XcessHome() {
                 </svg>
               </a>
               <a
-                href="mailto:contact@xcessmedia.com"
+                href="mailto:getintouchwithxcessmedia@gmail.com"
                 aria-label="Email"
                 className="hover:text-white transition-colors"
               >
@@ -2607,7 +2430,7 @@ export default function XcessHome() {
                 </svg>
               </a>
               <a
-                href="https://x.com"
+                href="https://x.com/wexcessmedia"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="X (Twitter)"
@@ -2769,7 +2592,7 @@ export default function XcessHome() {
                     </svg>
                   </a>
                   <a
-                    href="https://facebook.com"
+                    href="https://www.facebook.com/share/1VGdn1kfvm/?mibextid=wwXIfr"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Facebook"
@@ -2780,7 +2603,7 @@ export default function XcessHome() {
                     </svg>
                   </a>
                   <a
-                    href="https://whatsapp.com"
+                    href="https://wa.me/919448553423?text=Hi"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="WhatsApp"
@@ -2791,7 +2614,7 @@ export default function XcessHome() {
                     </svg>
                   </a>
                   <a
-                    href="mailto:contact@xcessmedia.com"
+                    href="mailto:getintouchwithxcessmedia@gmail.com"
                     aria-label="Email"
                     className="p-1 hover:text-white transition-colors"
                   >
@@ -2801,7 +2624,7 @@ export default function XcessHome() {
                     </svg>
                   </a>
                   <a
-                    href="https://x.com"
+                    href="https://x.com/wexcessmedia"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="X (Twitter)"
