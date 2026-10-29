@@ -1,3 +1,4 @@
+
 import type { Metadata, Viewport } from 'next'
 import { Inter, Space_Grotesk } from 'next/font/google'
 import './globals.css'
@@ -17,9 +18,51 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'Xcess Media | Creative & Digital Agency for Restaurants & Interior Design',
+  metadataBase: new URL('https://xcessmedia.in'),
+
+  title: {
+    default: 'Xcess Media | Digital Marketing & Creative Agency',
+    template: '%s | Xcess Media',
+  },
+
   description:
-    'Creative and digital marketing solutions for restaurants and interior design studios.',
+    'Xcess Media helps restaurants and interior design businesses grow through digital marketing, social media, SEO, website development and creative content.',
+
+  applicationName: 'Xcess Media',
+
+  alternates: {
+    canonical: '/',
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+
+  openGraph: {
+    type: 'website',
+    url: 'https://xcessmedia.in/',
+    siteName: 'Xcess Media',
+    title: 'Xcess Media | Digital Marketing & Creative Agency',
+    description:
+      'Digital marketing, social media, SEO, web development and creative content for growing businesses.',
+    locale: 'en_IN',
+  },
+
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Xcess Media | Digital Marketing & Creative Agency',
+    description:
+      'Digital marketing, social media, SEO, web development and creative content for growing businesses.',
+  },
+
   generator: 'Xcess Media',
 
   icons: {
@@ -59,6 +102,31 @@ export const viewport: Viewport = {
   themeColor: '#050505',
 }
 
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://xcessmedia.in/#organization',
+      name: 'Xcess Media',
+      url: 'https://xcessmedia.in/',
+      description:
+        'Digital marketing and creative services for restaurants, interior design businesses and growing brands.',
+      sameAs: ['https://www.instagram.com/xcessmedia.in/'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://xcessmedia.in/#website',
+      name: 'Xcess Media',
+      url: 'https://xcessmedia.in/',
+      publisher: {
+        '@id': 'https://xcessmedia.in/#organization',
+      },
+      inLanguage: 'en-IN',
+    },
+  ],
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -67,6 +135,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData).replace(/</g, '\\u003c'),
+          }}
+        />
         {children}
       </body>
     </html>
