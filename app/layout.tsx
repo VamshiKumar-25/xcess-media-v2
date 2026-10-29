@@ -20,13 +20,14 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   metadataBase: new URL('https://xcessmedia.in'),
 
-  title: {
-    default: 'Xcess Media | Digital Marketing & Creative Agency',
-    template: '%s | Xcess Media',
-  },
 
-  description:
-    'Xcess Media helps restaurants and interior design businesses grow through digital marketing, social media, SEO, website development and creative content.',
+title: {
+  default: 'Xcess Media | Digital Marketing Agency in Bengaluru & Gangavathi',
+  template: '%s | Xcess Media',
+},
+description:
+  'Xcess Media helps businesses in Bengaluru and Gangavathi grow through social media marketing, creative content, website development, Local SEO and paid advertising.',
+
 
   applicationName: 'Xcess Media',
 
@@ -46,22 +47,23 @@ export const metadata: Metadata = {
     },
   },
 
-  openGraph: {
-    type: 'website',
-    url: 'https://xcessmedia.in/',
-    siteName: 'Xcess Media',
-    title: 'Xcess Media | Digital Marketing & Creative Agency',
-    description:
-      'Digital marketing, social media, SEO, web development and creative content for growing businesses.',
-    locale: 'en_IN',
-  },
+  
+openGraph: {
+  type: 'website',
+  url: 'https://xcessmedia.in/',
+  siteName: 'Xcess Media',
+  title: 'Xcess Media | Digital Marketing Agency in Bengaluru & Gangavathi',
+  description:
+    'Xcess Media helps businesses in Bengaluru and Gangavathi grow through social media marketing, creative content, website development, Local SEO and paid advertising.',
+  locale: 'en_IN',
+},
+twitter: {
+  card: 'summary_large_image',
+  title: 'Xcess Media | Digital Marketing Agency in Bengaluru & Gangavathi',
+  description:
+    'Xcess Media helps businesses in Bengaluru and Gangavathi grow through social media marketing, creative content, website development, Local SEO and paid advertising.',
+},
 
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Xcess Media | Digital Marketing & Creative Agency',
-    description:
-      'Digital marketing, social media, SEO, web development and creative content for growing businesses.',
-  },
 
   generator: 'Xcess Media',
 
