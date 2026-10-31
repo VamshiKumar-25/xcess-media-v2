@@ -2548,12 +2548,12 @@ export default function XcessHome() {
                 >
                   ↑
                 </a>
-                <a href="#top" className="hover:text-white transition-colors">
+                <Link href="/privacy" className="hover:text-white transition-colors">
                   PRIVACY
-                </a>
-                <a href="#top" className="hover:text-white transition-colors">
+                </Link>
+                <Link href="/terms" className="hover:text-white transition-colors">
                   TERMS
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -2749,12 +2749,12 @@ export default function XcessHome() {
                 <a href="#top" className="hover:text-white transition-colors">
                   BACK TO TOP ↑
                 </a>
-                <a href="#top" className="hover:text-white transition-colors">
+                <Link href="/privacy" className="hover:text-white transition-colors">
                   PRIVACY
-                </a>
-                <a href="#top" className="hover:text-white transition-colors">
+                </Link>
+                <Link href="/terms" className="hover:text-white transition-colors">
                   TERMS
-                </a>
+                </Link>
               </div>
             </div>
           </div>
